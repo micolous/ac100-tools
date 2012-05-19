@@ -1,5 +1,17 @@
 #!/bin/bash
 # Adapted from http://ac100.grandou.net/backlightcontrol
+#
+# No arguments:
+#   Gets the current value of the backlight.
+#
+# inc:
+#   Increments the backlight by 25 (about 10%)
+#
+# dec:
+#   Decrements the backlight by 25 (about 10%)
+#
+# a number:
+#   Sets the backlight level to the amount specified (range 0-255)
 
 backlight="/sys/class/backlight/pwm-backlight/brightness"
 
