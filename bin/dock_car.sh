@@ -5,7 +5,7 @@ ME="michael"
 sleep 5s
 
 # start up music
-sudo -u $ME mocp -U
+sudo -u $ME mocp -p
 
 # start up gps
 service gpsd start

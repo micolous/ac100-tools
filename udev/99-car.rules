@@ -3,9 +3,10 @@
 #
 # Because this blocks udev, use atd to schedule it in the future.
 SUBSYSTEM=="usb", ACTION=="add", ATTR{idVendor}=="05e3", ATTR{idProduct}=="0605", RUN+="/usr/bin/dock_car.sh"
-SUBSYSTEM=="usb", ACTION=="remove", ATTR{idVendor}=="05e3", ATTR{idProduct}=="0605", RUN+="/usr/bin/undock_car.sh"
+SUBSYSTEM=="usb", ACTION=="remove", ENV{ID_VENDOR_ID}=="05e3", ENV{ID_MODEL_ID}=="0605", RUN+="/usr/bin/undock_car.sh"
 
 
 # Test device that is not in the car (HTC Mozart)
 SUBSYSTEM=="usb", ACTION=="add", ATTR{idVendor}=="045e", ATTR{idProduct}=="04ec", RUN+="/usr/bin/dock_car.sh"
-SUBSYSTEM=="usb", ACTION=="remove", ATTR{idVendor}=="045e", ATTR{idProduct}=="04ec", RUN+="/usr/bin/undock_car.sh"
+SUBSYSTEM=="usb", ACTION=="remove", ENV{ID_VENDOR_ID}=="045e", ENV{ID_MODEL_ID}=="04ec", RUN+="/usr/bin/undock_car.sh"
+
