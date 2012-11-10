@@ -12,6 +12,7 @@ install_car:
 	install -o0 -g0 bin/bbmop.py /usr/local/bin/
 	install -o0 -g0 bin/bbmpris.py /usr/local/bin/
 	install -o0 -g0 bin/powerman.py /usr/local/sbin/
+	install -o0 -g0 bin/auxpra.sh /usr/local/bin/
 	# only used in suspend mode
 	#install -o0 -g0 bin/dock_car.sh /usr/local/bin/
 	#install -o0 -g0 bin/undock_car.sh /usr/local/bin/

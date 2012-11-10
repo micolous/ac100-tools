@@ -28,15 +28,15 @@ while keep_running:
         print "got button press on %s, button %s" % (event.joy, event.button)
         
         if event.button == 0:
-          system('mpris-remote next') # next
+          system('DISPLAY=:100 mpris-remote next') # next
         elif event.button == 1:
           if paused:
-            system('mpris-remote play') # play/pause
+            system('DISPLAY=:100 mpris-remote play') # play/pause
           else:
-            system('mpris-remote pause')
+            system('DISPLAY=:100 mpris-remote pause')
           paused = not paused
         elif event.button == 2:
-          system('mpris-remote prev')
+          system('DISPLAY=:100 mpris-remote prev')
           
          
   # sleep
