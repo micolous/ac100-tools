@@ -18,10 +18,14 @@ while 1:
 	position = location.get_location_info()
 	
 	print "sending to screen..."
-	d = '%02.2f  %03.2f' % (position['latitude'], position['longitude'])
-	d += (16 - len(d)) * ' '
-	print d
-	iface.seven_writestr_mirror(d)
+	if 'latitude' in position:
+		d = '%02.2f  %03.2f' % (position['latitude'], position['longitude'])
+		d += (16 - len(d)) * ' '
+		print d
+		iface.seven_writestr_mirror(d)
+	else:
+		# no location info
+		iface.seven_writestr_mirror('  .      .  ')
 	
 	print "napping..."
 	sleep(1.)
