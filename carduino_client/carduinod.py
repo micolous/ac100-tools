@@ -60,7 +60,7 @@ def boot_dbus():
 	protocol = CarduinoProtocol()
 	api = CarduinoService(name, protocol)
 	
-	SerialPort(protocol, '/dev/ttyUSB0', reactor, baudrate=9600)
+	SerialPort(protocol, '/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AH00ZL76-if00-port0', reactor, baudrate=9600)
 
 def main():
 	DBusGMainLoop(set_as_default=True)
