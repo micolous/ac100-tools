@@ -39,8 +39,7 @@ def digit_reflect(d):
 
 class CarduinoProtocol(LineReceiver):
 	"""
-	Implements a twisted protocol for communicating with a CBus PCI over serial
-	or TCP.
+	Implements a twisted protocol for communicating with Carduino
 	
 	"""
 
