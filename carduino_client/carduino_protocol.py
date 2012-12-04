@@ -48,7 +48,8 @@ class CarduinoProtocol(LineReceiver):
 	def connectionMade(self):
 		# issue reset command
 		
-		self.transport.write('\\')
+		# send it 17 times in case gpsd has decided to shit on our parade
+		self.transport.write('\\' * 17)
 	
 	def lineReceived(self, line):
 		# got data from the carduino
