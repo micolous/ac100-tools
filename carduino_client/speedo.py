@@ -20,36 +20,39 @@ for report in gps_s:
 		continue
 	print repr(report)
 	
-	# convert speed from m/s to km/h
-	speed = report['speed'] * 3.6 # 3600 / 1000
-	
-	if report['track'] <= 22.5:
-		d = 'N '
-	elif 22.5 <= report['track'] <= 67.5:
-		d = 'NE'
-	elif 67.5 <= report['track'] <= 112.5:
-		d = 'E '
-	elif 112.5 <= report['track'] <= 157.5:
-		d = 'SE'
-	elif 157.5 <= report['track'] <= 202.5:
-		d = 'S '
-	elif 202.5 <= report['track'] <= 247.5:
-		d = 'SW'
-	elif 247.5 <= report['track'] <= 292.5:
-		d = 'W '
-	elif 292.5 <= report['track'] <= 337.5:
-		d = 'NW'
-	else:
-		d = 'N '
+	now = datetime.now()
+	if 'speed' in report:
+		# convert speed from m/s to km/h
+		speed = report['speed'] * 3.6 # 3600 / 1000
 		
+		if report['track'] <= 22.5:
+			d = 'N '
+		elif 22.5 <= report['track'] <= 67.5:
+			d = 'NE'
+		elif 67.5 <= report['track'] <= 112.5:
+			d = 'E '
+		elif 112.5 <= report['track'] <= 157.5:
+			d = 'SE'
+		elif 157.5 <= report['track'] <= 202.5:
+			d = 'S '
+		elif 202.5 <= report['track'] <= 247.5:
+			d = 'SW'
+		elif 247.5 <= report['track'] <= 292.5:
+			d = 'W '
+		elif 292.5 <= report['track'] <= 337.5:
+			d = 'NW'
+		else:
+			d = 'N '
+			
+		m = '%02d.%02d    %03.0f %s' % (now.hour, now.minute, speed, d)
+	else:
+		m = '%02d.%02d          ' % (now.hour, now.minute)
 	
 	
 	print "sending to screen..."
 	#d = '%02.2f  %03.2f' % (report['lat'], report['lon'])
-	now = datetime.now()
-	d = '%02d.%02d    %03.0f %s' % (now.hour, now.minute, speed, d)
 	
-	d += (16 - len(d)) * ' '
-	print d
-	iface.seven_writestr_mirror(d)
+	m += (16 - len(m)) * ' '
+	print m
+	iface.seven_writestr_mirror(m)
 	
