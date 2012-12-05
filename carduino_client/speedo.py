@@ -28,11 +28,15 @@ iface.connect_to_signal(
 gps_s = gps.gps(host='localhost', port='2947')
 gps_s.stream(flags=gps.WATCH_JSON)
 
-
+loop = gobject.MainLoop()
+context = loop.get_context()
 
 #$while 1:
 show_clock_dot = True
 for report in gps_s:
+	# take this chance to pump gobject
+	context.iteration(False)
+	
 	if report['class'] != 'TPV':
 		continue
 		
