@@ -14,7 +14,15 @@ DIGIT_FONT = {
 	'7': 1 + 2 + 4,
 	'8': 1 + 2 + 4 + 8 + 16 + 32 + 64,
 	'9': 1 + 2 + 4 + 8 + 32 + 64,
-	'.': 128,
+	#'.': 128,
+	
+	# from TM16XXFonts.h
+	'N': 55,
+	'E': 121,
+	'S': 1 + 4 + 8 + 32 + 64,
+	'W': 29,
+	
+	'c': 88,
 }
 
 
@@ -89,6 +97,9 @@ class CarduinoProtocol(LineReceiver):
 		for c in s:
 			if c in DIGIT_FONT:
 				d.append(DIGIT_FONT[c])
+			elif c == '.':
+				# add dot to previous digit
+				d[-1] |= 128
 			else:
 				d.append(DIGIT_FONT[' '])
 			
@@ -96,14 +107,20 @@ class CarduinoProtocol(LineReceiver):
 
 	def seven_writestr(self, s):		
 		s = str(s)
-		assert 0 < len(s) <= 16, 'string length must be 1 .. 16'
+		if s.startswith('.'):
+			s = ' ' + s
+		
+		assert 0 < len(s.replace('.', '') <= 16, 'string length must be 1 .. 16'
 		d = self.seven_getsegs(s)
 		
 		self.seven_writesegs(d)
 		
 	def seven_writestr_mirror(self, s):
 		s = str(s)
-		assert 0 < len(s) <= 16, 'string length must be 1 .. 16'
+		if s.startswith('.'):
+			s = ' ' + s
+
+		assert 0 < len(s.replace('.', '')) <= 16, 'string length must be 1 .. 16'
 		d = [digit_reflect(c) for c in self.seven_getsegs(s)]
 		
 		self.seven_writesegs(d)

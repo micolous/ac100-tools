@@ -47,7 +47,7 @@ for report in gps_s:
 	print "sending to screen..."
 	#d = '%02.2f  %03.2f' % (report['lat'], report['lon'])
 	now = datetime.now()
-	d = '%02d%02d    %03.0f %s' % (now.hour, now.minute, speed, d)
+	d = '%02d.%02d    %03.0f %s' % (now.hour, now.minute, speed, d)
 	
 	d += (16 - len(d)) * ' '
 	print d
