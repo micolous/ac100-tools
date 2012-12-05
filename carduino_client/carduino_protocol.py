@@ -73,7 +73,7 @@ class CarduinoProtocol(LineReceiver):
 		if line.startswith('TEMP '):
 			#print "temperature packet: %s" % line
 			
-			cmd, temp = line.split(' ', maxsplit=2)
+			cmd, temp = line.split(' ', 2)
 			try:
 				temp = float(temp)
 				self.on_temperature(temp)	
