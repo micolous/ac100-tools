@@ -71,7 +71,7 @@ class CarduinoService(dbus.service.Object):
 def boot_dbus():
 	bus = dbus.SystemBus()
 	name = dbus.service.BusName(DBUS_SERVICE, bus=bus)
-	protocol = CarduinoProtocol()
+	protocol = CarduinoProtocolHandler()
 	api = CarduinoService(name, protocol)
 	
 	SerialPort(protocol, '/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AH00ZL76-if00-port0', reactor, baudrate=9600)
