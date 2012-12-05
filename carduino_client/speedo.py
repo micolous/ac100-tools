@@ -63,9 +63,9 @@ for report in gps_s:
 		else:
 			d = 'N '
 			
-		m = '%02d%s%02d %02d %03.0f %s' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE, speed, d)
+		m = '%02d%s%02d %02.0f %03.0f %s' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE, speed, d)
 	else:
-		m = '%02d%s%02d %02d        ' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE)
+		m = '%02d%s%02d %02.0f        ' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE)
 	
 	
 	print "sending to screen..."
