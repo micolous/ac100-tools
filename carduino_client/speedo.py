@@ -17,7 +17,10 @@ TEMPERATURE = 0.
 
 def on_temperature(temperature, sender=None):
 	global TEMPERATURE
-	TEMPERATURE = temperature
+	
+	# FIXME: handle negative temperatures properly
+	# FIXME: summer
+	TEMPERATURE = abs(temperature)
 
 iface.connect_to_signal(
 	'on_temperature',
@@ -67,10 +70,11 @@ for report in gps_s:
 			d = 'NW'
 		else:
 			d = 'N '
-			
-		m = '%02d%s%02d %02.0f %03.0f %s' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE, speed, d)
+		
+		
+		m = '%02d%s%02d  %02.0f  %03.0f %s' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE, speed, d)
 	else:
-		m = '%02d%s%02d %02.0f        ' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE)
+		m = '%02d%s%02d  %02.0f       ' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE)
 	
 	
 	print "sending to screen..."
