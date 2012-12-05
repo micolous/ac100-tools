@@ -110,7 +110,7 @@ class CarduinoProtocol(LineReceiver):
 		if s.startswith('.'):
 			s = ' ' + s
 		
-		assert 0 < len(s.replace('.', '') <= 16, 'string length must be 1 .. 16'
+		assert 0 < len(s.replace('.', '')) <= 16, 'string length must be 1 .. 16'
 		d = self.seven_getsegs(s)
 		
 		self.seven_writesegs(d)
