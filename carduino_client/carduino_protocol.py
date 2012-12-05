@@ -55,14 +55,30 @@ class CarduinoProtocol(LineReceiver):
 	def connectionMade(self):
 		# issue reset command
 		
-		# send it 17 times in case gpsd has decided to shit on our parade
+		# Send it 17 times in case gpsd has decided to shit on our parade
+		#
+		# TODO: Every time we don't get "READY" back, send esr an email
+		#       about being a "tiny minority of geeks" who have a serial
+		#       device connected with a USB-TTL converter chip that isn't
+		#       a GPS.
+		#
+		# Non-GPS and GPS devices in use on the same machine?  GOOD SIR,
+		# SURELY YOU JEST!
+		
 		self.transport.write('\\' * 17)
 	
 	def lineReceived(self, line):
 		# got data from the carduino
 		
 		if line.startswith('TEMP '):
-			print "temperature packet: %s" % line
+			#print "temperature packet: %s" % line
+			
+			cmd, temp = line.split(' ', maxsep=2)
+			try:
+				temp = float(temp)
+				self.on_temperature(temp)	
+			except:
+				pass
 		
 	
 	def lcd_clear(self):
@@ -74,6 +90,8 @@ class CarduinoProtocol(LineReceiver):
 	def lcd_display_off(self):
 		self.transport.write('\x42')
 	
+	def on_temperature(self, temperature):
+		print "current temperature: %.1fc" % (temperature, )
 	
 	def lcd_write(self, s):
 		s = str(s)

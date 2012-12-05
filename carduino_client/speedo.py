@@ -11,13 +11,32 @@ bus = dbus.SystemBus()
 
 carduino = bus.get_object('au.id.micolous.carduino.CarduinoService', '/')
 iface = dbus.Interface(carduino, dbus_interface='au.id.micolous.carduino.CarduinoInterface')
+
+TEMPERATURE = 0.
+
+def on_temperature(temperature, sender=None):
+	global TEMPERATURE
+	TEMPERATURE = temperature
+
+iface.connect_to_signal(
+	'on_temperature',
+	on_temperature,
+	sender_keyword='sender'
+)
+
+
 gps_s = gps.gps(host='localhost', port='2947')
 gps_s.stream(flags=gps.WATCH_JSON)
 
+
+
 #$while 1:
+show_clock_dot = True
 for report in gps_s:
 	if report['class'] != 'TPV':
 		continue
+		
+	show_clock_dot = not show_clock_dot
 	print repr(report)
 	
 	now = datetime.now()
@@ -44,9 +63,9 @@ for report in gps_s:
 		else:
 			d = 'N '
 			
-		m = '%02d.%02d    %03.0f %s' % (now.hour, now.minute, speed, d)
+		m = '%02d%s%02d %02d %03.0f %s' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE, speed, d)
 	else:
-		m = '%02d.%02d          ' % (now.hour, now.minute)
+		m = '%02d%s%02d %02d        ' % (now.hour, ('.' if show_clock_dot else ''), now.minute, TEMPERATURE)
 	
 	
 	print "sending to screen..."

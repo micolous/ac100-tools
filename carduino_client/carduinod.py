@@ -26,6 +26,16 @@ DBUS_INTERFACE = 'au.id.micolous.carduino.CarduinoInterface'
 DBUS_SERVICE = 'au.id.micolous.carduino.CarduinoService'
 DBUS_PATH = '/'
 
+class CarduinoProtocolHandler(CarduinoProtocol):
+	# glue to let us handle events from the arduino
+	
+	dbus_api = None
+	
+	def on_temperature(self, temperature):
+		if not self.dbus_api: return
+		self.dbus_api.on_temperature(temperature)
+
+
 class CarduinoService(dbus.service.Object):
 	"""
 	Carduino service object for DBus.
@@ -35,6 +45,8 @@ class CarduinoService(dbus.service.Object):
 		self.proto = protocol
 		self.proto.dbus_api = self
 		dbus.service.Object.__init__(self, bus, object_path)
+		
+
 
 
 	@dbus.service.method(dbus_interface=DBUS_INTERFACE, in_signature='s', out_signature='')
@@ -49,7 +61,9 @@ class CarduinoService(dbus.service.Object):
 	def seven_writestr_mirror(self, s):
 		self.proto.seven_writestr_mirror(s)
 
-	
+	@dbus.service.signal(dbus_interface=DBUS_INTERFACE, signature='d')
+	def on_temperature(self, temperature):
+		pass
 	
 	
 
