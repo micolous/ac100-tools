@@ -25,9 +25,9 @@ DBUS_SERVICE = 'au.id.micolous.carduino.GpsdService'
 DBUS_PATH = '/'
 
 class PmtkProtocolHandler(PmtkProtocol):
+	dbus_api = None
+	
 	def connectionMade(self):
-		self.dbus_api = None
-		
 		# bump up the baud rate
 		self.pmtk_set_nmea_baudrate(38400)
 		self.transport.setBaudRate(38400)
@@ -36,6 +36,8 @@ class PmtkProtocolHandler(PmtkProtocol):
 		self.pmtk_set_nmea_updaterate(100)
 		
 	def on_transit_data(self, dt, lat, lng, speed, course, variation):
+		#print dt, lat, lng, speed, course, variation
+
 		if not self.dbus_api: return
 		self.dbus_api.on_location(dt.isoformat(), lat, lng, speed, course, variation)
 		
@@ -63,6 +65,7 @@ def boot_dbus(device):
 	
 	port = SerialPort(protocol, device, reactor, baudrate=9600)
 	#protocol.port = port
+	print 'Service started....'
 
 def main():
 	parser = ArgumentParser()
