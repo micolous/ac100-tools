@@ -39,7 +39,7 @@ class PmtkProtocolHandler(PmtkProtocol):
 		#print dt, lat, lng, speed, course, variation
 
 		if not self.dbus_api: return
-		self.dbus_api.on_location(dt.isoformat(), lat, lng, speed, course, variation)
+		self.dbus_api.on_location(dt.isoformat()+'+00:00', lat, lng, speed, course, variation)
 		
 
 class GpsdService(dbus.service.Object):
