@@ -59,7 +59,7 @@ def boot_dbus(device):
 	bus = dbus.SystemBus()
 	name = dbus.service.BusName(DBUS_SERVICE, bus=bus)
 	protocol = PmtkProtocolHandler()
-	api = CarduinoService(name, protocol)
+	api = GpsdService(name, protocol)
 	
 	port = SerialPort(protocol, device, reactor, baudrate=9600)
 	#protocol.port = port
