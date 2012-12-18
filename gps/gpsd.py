@@ -67,7 +67,7 @@ def boot_dbus(device):
 def main():
 	parser = ArgumentParser()
 	
-	parser.add_option(
+	parser.add_argument(
 		'-d', '--device',
 		dest='device',
 		help='Serial device where the GPS is located'

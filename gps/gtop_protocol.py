@@ -54,7 +54,6 @@ class PmtkProtocol(LineReceiver):
 		except:
 			# parse error
 			pass
-			#print 'parse error'
 			
 	def on_gprmc(self, args):
 		# check if valid
@@ -99,7 +98,7 @@ class PmtkProtocol(LineReceiver):
 		o = 'PMTK%s,%s' % (cmd, ','.join((str(x) for x in args)))
 		o = '$%s*%s' % (o, pmtk_checksum(o))
 		
-		print "send: %s" % o
+		#print "send: %s" % o
 		self.transport.write(o + '\r\n')
 		
 	def pmtk_set_nmea_baudrate(self, baud):
