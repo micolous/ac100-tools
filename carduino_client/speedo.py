@@ -17,7 +17,7 @@ iface = dbus.Interface(carduino, dbus_interface='au.id.micolous.carduino.Carduin
 gpsd = bus.get_object('au.id.micolous.carduino.GpsdService', '/')
 g_iface = dbus.Interface(gpsd, dbus_interface='au.id.micolous.carduino.GpsdInterface')
 
-power = system_bus.get_object('org.freedesktop.UPower', '/org/freedesktop/UPower/devices/line_power_ac')
+power = bus.get_object('org.freedesktop.UPower', '/org/freedesktop/UPower/devices/line_power_ac')
 p_get_property = lambda x: power.Get('org.freedesktop.UPower.Device', x, dbus_interface='org.freedesktop.DBus.Properties')
 
 TEMPERATURE = 0.
