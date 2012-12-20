@@ -18,6 +18,7 @@ gpsd = bus.get_object('au.id.micolous.carduino.GpsdService', '/')
 g_iface = dbus.Interface(gpsd, dbus_interface='au.id.micolous.carduino.GpsdInterface')
 
 power = bus.get_object('org.freedesktop.UPower', '/org/freedesktop/UPower/devices/line_power_ac')
+p_iface = dbus.Interface(power, dbus_interface='org.freedesktop.UPower.Device')
 p_get_property = lambda x: power.Get('org.freedesktop.UPower.Device', x, dbus_interface='org.freedesktop.DBus.Properties')
 
 TEMPERATURE = 0.
@@ -33,6 +34,10 @@ def on_temperature(temperature, sender=None):
 SHOW_CLOCK_DOT = True
 POWER_STATE = True
 
+def on_power_changed(sender=None):
+	global POWER_STATE
+	POWER_STATE = bool(p_get_property('Online'))
+
 def on_location(dt, lat, lng, speed, course, variation, sender=None):
 	global LAT, LONG, SPEED, BEARING, SHOW_CLOCK_DOT, POWER_STATE
 	
@@ -41,7 +46,6 @@ def on_location(dt, lat, lng, speed, course, variation, sender=None):
 	if now.microsecond == 0:
 		# whole second, toggle the dot and hide the display if there's no power
 		SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
-		POWER_STATE = bool(p_get_property('Online'))
 		if not POWER_STATE:
 			# no mains power, hide display
 			iface.seven_writestr_mirror(' ' * 16)
@@ -102,11 +106,20 @@ g_iface.connect_to_signal(
 	sender_keyword='sender'
 )
 
+
+p_iface.connect_to_signal(
+	'Changed',
+	on_power_changed,
+	sender_keyword='sender'
+)
+
 #gps_s = gps.gps(host='localhost', port='2947')
 #gps_s.stream(flags=gps.WATCH_JSON)
 
+on_power_changed()
+
 loop = gobject.MainLoop()
-context = loop.get_context()
+#context = loop.get_context()
 
 loop.run()
 #$while 1:
