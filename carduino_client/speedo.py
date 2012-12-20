@@ -41,7 +41,7 @@ def on_location(dt, lat, lng, speed, course, variation, sender=None):
 	if now.microsecond == 0:
 		# whole second, toggle the dot and hide the display if there's no power
 		SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
-		POWER_STATE = bool(get_property('Online'))
+		POWER_STATE = bool(p_get_property('Online'))
 		if not POWER_STATE:
 			# no mains power, hide display
 			iface.seven_writestr_mirror(' ' * 16)
