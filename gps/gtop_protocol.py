@@ -77,7 +77,7 @@ class PmtkProtocol(LineReceiver):
 		
 		lat = lat_deg + (lat_min / 60.)
 		lng = lng_deg + (lng_min / 60.)
-		if args[3] == 'N': lat *= -1
+		if args[3] == 'S': lat *= -1
 		if args[5] == 'W': lng *= -1
 		
 		# convert speed to m/s
