@@ -2,6 +2,7 @@
 from twisted.protocols.basic import LineReceiver
 from struct import pack
 from datetime import datetime
+from time import sleep
 
 def pmtk_checksum(i):
 	o = 0
@@ -36,7 +37,7 @@ class PmtkProtocol(LineReceiver):
 		#print "recv: %s" % line
 		line = line.strip()
 		try:
-			if line.startswith('$'):
+			if line.startswith('$GPRMC'): # only handles gprmc so skip some others
 				# parse NMEA sentence
 				word, checksum = line[1:].split('*', 2)
 				
@@ -48,8 +49,8 @@ class PmtkProtocol(LineReceiver):
 				# now parse some
 				args = word.split(',')
 				
-				if args[0] == 'GPRMC':
-					self.on_gprmc(args[1:])
+				#if args[0] == 'GPRMC':
+				self.on_gprmc(args[1:])
 				#elif args[0] == '
 		except:
 			# parse error
@@ -60,14 +61,17 @@ class PmtkProtocol(LineReceiver):
 		if args[1] != 'A': return
 	
 		# parse out the time
-		t = datetime.strptime(args[0][:6], '%H%M%S')
-		if len(args[0]) > 6:
-			t = t.replace(microsecond = int(float(args[0][6:]) * 1000000.))
-		
+		#t = datetime.strptime(args[0][:6], '%H%M%S')
 		# parse the date
-		d = datetime.strptime(args[8], '%d%m%y')
+		dt = datetime.strptime(args[8] + args[0][:6], '%d%m%y%H%M%S')
+
+		if len(args[0]) > 6:
+			dt = dt.replace(microsecond = int(float(args[0][6:]) * 1000000.))
 		
-		dt = datetime.combine(d.date(), t.time())
+		if dt.year < 2000:
+			dt = dt.replace(year=2000 + (dt.year % 100))
+		
+		#dt = datetime.combine(d.date(), t.time())
 		
 		# now parse the location.
 		lat_deg = int(args[2][:2])
@@ -80,12 +84,12 @@ class PmtkProtocol(LineReceiver):
 		if args[3] == 'S': lat *= -1
 		if args[5] == 'W': lng *= -1
 		
-		# convert speed to m/s
-		speed = float(args[6]) * 0.514
-		
+		# convert speed to km/h
+		speed = float(args[6]) * 1.852	
 		course = float(args[7])
 		if args[9]:
-			variation = float(args[9]) * (-1 if args[10] == 'W' else 1)
+			variation = float(args[9])
+			if args[10] == 'W': variation *= -1
 		else:
 			variation = 0.
 		
@@ -99,7 +103,8 @@ class PmtkProtocol(LineReceiver):
 		o = '$%s*%s' % (o, pmtk_checksum(o))
 		
 		#print "send: %s" % o
-		self.transport.write(o + '\r\n')
+		self.transport.writeSomeData('\r\n\r\n' + o + '\r\n')
+		sleep(1)
 		
 	def pmtk_set_nmea_baudrate(self, baud):
 		if baud not in (4800, 9600, 14400, 19200, 38400, 57600, 115200):

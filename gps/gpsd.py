@@ -3,6 +3,7 @@
 from gtop_protocol import PmtkProtocol
 from twisted.internet.error import ReactorAlreadyInstalledError
 from twisted.internet import glib2reactor
+from time import sleep
 
 try:
 	glib2reactor.install()
@@ -28,12 +29,18 @@ class PmtkProtocolHandler(PmtkProtocol):
 	dbus_api = None
 	
 	def connectionMade(self):
+		#self.transport.flush()
+		self.transport.setBaudRate(9600)
+
 		# bump up the baud rate
 		self.pmtk_set_nmea_baudrate(38400)
+		sleep(2)
+
 		self.transport.setBaudRate(38400)
-		
+		print "changing update rate"
 		# change update rate
 		self.pmtk_set_nmea_updaterate(100)
+		#self.transport.flush()
 		
 	def on_transit_data(self, dt, lat, lng, speed, course, variation):
 		#print dt, lat, lng, speed, course, variation
