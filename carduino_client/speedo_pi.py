@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 
-#import gps
+import gps
 from time import sleep
-import dbus
 from datetime import datetime
 import dateutil.parser
 from dateutil.tz import tzlocal
-from dbus.mainloop.glib import DBusGMainLoop
-DBusGMainLoop(set_as_default=True)
-import gobject
 from tm1640 import TM1640, INVERT_MODE_VERTICAL
 
 tzlocal = tzlocal()
@@ -17,36 +13,10 @@ display = TM1640()
 display.on()
 display.clear()
 
-bus = dbus.SystemBus()
-
-#carduino = bus.get_object('au.id.micolous.carduino.CarduinoService', '/')
-#iface = dbus.Interface(carduino, dbus_interface='au.id.micolous.carduino.CarduinoInterface')
-gpsd = bus.get_object('au.id.micolous.carduino.GpsdService', '/')
-g_iface = dbus.Interface(gpsd, dbus_interface='au.id.micolous.carduino.GpsdInterface')
-
-#power = bus.get_object('org.freedesktop.UPower', '/org/freedesktop/UPower/devices/line_power_ac')
-#p_iface = dbus.Interface(power, dbus_interface='org.freedesktop.UPower.Device')
-#p_get_property = lambda x: power.Get('org.freedesktop.UPower.Device', x, dbus_interface='org.freedesktop.DBus.Properties')
-
-TEMPERATURE = 0.
-LAT = LONG = SPEED = COURSE = 0.
-
-def on_temperature(temperature, sender=None):
-	global TEMPERATURE
-	
-	# FIXME: handle negative temperatures properly
-	# FIXME: summer
-	TEMPERATURE = abs(temperature)
-
 SHOW_CLOCK_DOT = False
-POWER_STATE = True
 
-def on_power_changed(sender=None):
-	global POWER_STATE
-	POWER_STATE = True #bool(p_get_property('Online'))
-
-def on_location(dt, lat, lng, speed, course, variation, sender=None):
-	global LAT, LONG, SPEED, BEARING, SHOW_CLOCK_DOT, POWER_STATE
+def on_location(dt, speed, course):
+	global SHOW_CLOCK_DOT
 	
 	now = dateutil.parser.parse(dt).astimezone(tzlocal)
 	
@@ -98,56 +68,14 @@ def on_location(dt, lat, lng, speed, course, variation, sender=None):
 	
 	
 	print "sending to screen..."
-	#d = '%02.2f  %03.2f' % (report['lat'], report['lon'])
 	
 	m += (16 - len(m)) * ' '
 	print m
 	display.write(m, invert_mode=INVERT_MODE_VERTICAL)
-	#system('tm1640 write \'%s\'' % m)
-	#iface.seven_writestr_mirror(m)
 
-
-#iface.connect_to_signal(
-#	'on_temperature',
-#	on_temperature,
-#	sender_keyword='sender'
-#)
-
-
-g_iface.connect_to_signal(
-	'on_location', 
-	on_location,
-	sender_keyword='sender'
-)
-
-
-#p_iface.connect_to_signal(
-#	'Changed',
-#	on_power_changed,
-#	sender_keyword='sender'
-#)
-
-#gps_s = gps.gps(host='localhost', port='2947')
-#gps_s.stream(flags=gps.WATCH_JSON)
-
-on_power_changed()
-
-loop = gobject.MainLoop()
-#context = loop.get_context()
-
-loop.run()
-#$while 1:
-#SHOW_CLOCK_DOT = True
-#for report in gps_s:
-#while 1:
-#	# take this chance to pump gobject
-#	#context.iteration(False)
-#	
-#	if report['class'] != 'TPV':
-#		continue
-#		
-#	SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
-#	print repr(report)
-#	
-#	now = datetime.now()
-#	
+session = gps.gps()
+session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE
+for report in session:
+	if report['class'] == 'TPV':
+		# this is what we want
+		on_location(report['time'], report['speed'] * 1.852, report['track'])
