@@ -32,7 +32,7 @@ display.clear()
 
 SHOW_CLOCK_DOT = False
 
-def on_location(dt, speed, course):
+def on_location(dt, speed, course, fix):
 	global SHOW_CLOCK_DOT
 	
 	now = dateutil.parser.parse(dt).astimezone(tzlocal)
@@ -45,11 +45,7 @@ def on_location(dt, speed, course):
 		# reset display if it loses connection / sync
 		display.on()
 	
-	#if 'speed' in report:
-	if lat and long:
-		# convert speed from m/s to km/h
-		# speed *= 3.6 # 3600 / 1000
-		
+	if fix:
 		if course <= 22.5:
 			d = 'N '
 		elif 22.5 <= course <= 67.5:
@@ -68,8 +64,7 @@ def on_location(dt, speed, course):
 			d = 'NW'
 		else:
 			d = 'N '
-		
-		
+
 		m = '%02d%02d      %03.0f %s' % (now.hour, now.minute, speed, d)
 	else:
 		m = '%02d%02d           ' % (now.hour, now.minute)
@@ -86,4 +81,4 @@ session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 for report in session:
 	if report['class'] == 'TPV':
 		# this is what we want
-		on_location(report['time'], report['speed'] * 1.852, report['track'])
+		on_location(report['time'], report['speed'] * 1.852, report['track'], report['mode'] >= 2)
