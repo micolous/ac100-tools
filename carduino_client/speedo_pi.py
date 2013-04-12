@@ -22,21 +22,12 @@ def on_location(dt, speed, course):
 	
 	if now.microsecond == 0:
 		# whole second, toggle the dot and hide the display if there's no power
-		#SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
-		if not POWER_STATE:
-			# no mains power, hide display
-			#iface.seven_writestr_mirror(' ' * 16)
-			return
+		SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
 
 	if now.microsecond == 0 and now.second == 0:
 		# reset display if it loses connection / sync
 		display.on()
-
-
-	# don't write anything if there was no power on the last whole second
-	if not POWER_STATE:
-		return
-
+	
 	#if 'speed' in report:
 	if lat and long:
 		# convert speed from m/s to km/h
