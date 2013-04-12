@@ -1,5 +1,22 @@
 #!/usr/bin/env python
+"""
+carduino_client/speedo_pi.py - Implementation of speedo on TM1640
+Copyright 2013 Michael Farrell <http://micolous.id.au/>
 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
 import gps
 from time import sleep
 from datetime import datetime
@@ -65,7 +82,7 @@ def on_location(dt, speed, course):
 	display.write(m, invert_mode=INVERT_MODE_VERTICAL)
 
 session = gps.gps()
-session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE
+session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 for report in session:
 	if report['class'] == 'TPV':
 		# this is what we want
