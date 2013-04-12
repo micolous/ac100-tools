@@ -57,7 +57,8 @@ def main():
 	parser.add_argument(
 		'-d', '--device',
 		dest='device',
-		help='Serial device where the GPS is located'
+		help='Serial device where the GPS is located',
+		required=True
 	)
 	
 	parser.add_argument(
