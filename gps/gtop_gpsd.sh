@@ -13,4 +13,5 @@ chmod 664 /dev/ttyAMA0
 #
 # Also make it constantly run and don't wait for a client, and don't fork,
 # because we're going to run it in systemd.
-sudo -u nobody gpsd -b -n -N /dev/ttyAMA0
+sudo -u nobody gpsd -b -n -P /var/run/gpsd.pid /dev/ttyAMA0
+
