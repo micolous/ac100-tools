@@ -36,15 +36,16 @@ def on_location(dt, speed, course, fix):
 	global SHOW_CLOCK_DOT
 	
 	now = dateutil.parser.parse(dt).astimezone(tzlocal)
-	
-	if now.microsecond == 0:
+
+	if now.microsecond < 100000:
 		# whole second, toggle the dot and hide the display if there's no power
 		SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
 
 	if now.microsecond == 0 and now.second == 0:
 		# reset display if it loses connection / sync
 		display.on()
-	
+	clock = '%02d%s%02d' % (now.hour, '.' if SHOW_CLOCK_DOT else '', now.minute)
+
 	if fix:
 		if course <= 22.5:
 			d = 'N '
@@ -65,12 +66,12 @@ def on_location(dt, speed, course, fix):
 		else:
 			d = 'N '
 
-		m = '%02d%02d      %03.0f %s' % (now.hour, now.minute, speed, d)
+		m = '%s      %03.0f %s' % (clock, speed, d)
 	else:
-		m = '%02d%02d           ' % (now.hour, now.minute)
+		m = '%s           ' % (clock,)
 	
 	
-	print "sending to screen..."
+	#print "sending to screen..."
 	
 	m += (16 - len(m)) * ' '
 	print m
@@ -81,4 +82,6 @@ session.stream(gps.WATCH_ENABLE | gps.WATCH_NEWSTYLE)
 for report in session:
 	if report['class'] == 'TPV':
 		# this is what we want
-		on_location(report['time'], report['speed'] * 1.852, report['track'], report['mode'] >= 2)
+		speed = (report['speed'] * gps.MPS_TO_KPH) if 'speed' in report else 0
+		course = report['track'] if 'track' in report else 0
+		on_location(report['time'], speed, course, report['mode'] >= 2)
