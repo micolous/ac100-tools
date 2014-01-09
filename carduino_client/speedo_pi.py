@@ -20,48 +20,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import gps
 from time import sleep
 from datetime import datetime
-import dateutil.parser
-from dateutil.tz import tzlocal
+from isodate import parse_datetime
+from dateutil.tz import gettz
 from tm1640 import TM1640, INVERT_MODE_VERTICAL
 
-tzlocal = tzlocal()
+tzlocal = gettz('Australia/Adelaide')
 
 display = TM1640()
 display.on()
 display.clear()
 
-SHOW_CLOCK_DOT = False
+SHOW_CLOCK_DOT = ''
 
 def on_location(dt, speed, course, fix):
 	global SHOW_CLOCK_DOT
-	
-	now = dateutil.parser.parse(dt).astimezone(tzlocal)
+	#print dt
+	now = parse_datetime(dt).astimezone(tzlocal)
 
 	if now.microsecond < 100000:
 		# whole second, toggle the dot and hide the display if there's no power
-		SHOW_CLOCK_DOT = not SHOW_CLOCK_DOT
+		SHOW_CLOCK_DOT = '' if SHOW_CLOCK_DOT else '.'
 
 	if now.microsecond == 0 and now.second == 0:
 		# reset display if it loses connection / sync
 		display.on()
-	clock = '%02d%s%02d' % (now.hour, '.' if SHOW_CLOCK_DOT else '', now.minute)
+	clock = '%02d%s%02d' % (now.hour, SHOW_CLOCK_DOT, now.minute)
 
 	if fix:
 		if course <= 22.5:
 			d = 'N '
-		elif 22.5 <= course <= 67.5:
+		elif course <= 67.5:
 			d = 'NE'
-		elif 67.5 <= course <= 112.5:
+		elif course <= 112.5:
 			d = 'E '
-		elif 112.5 <= course <= 157.5:
+		elif course <= 157.5:
 			d = 'SE'
-		elif 157.5 <= course <= 202.5:
+		elif course <= 202.5:
 			d = 'S '
-		elif 202.5 <= course <= 247.5:
+		elif course <= 247.5:
 			d = 'SW'
-		elif 247.5 <= course <= 292.5:
+		elif course <= 292.5:
 			d = 'W '
-		elif 292.5 <= course <= 337.5:
+		elif course <= 337.5:
 			d = 'NW'
 		else:
 			d = 'N '
