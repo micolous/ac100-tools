@@ -117,9 +117,9 @@ void loop() {
 	
 int main(int argc, char** argv) {
 	// Just connect to the GPSd on localhost
-	if (gps_open("localhost", "2947", &gpsdata) != 0) {
-		fprintf(stderr, "cannot connect to gpsd\n");
-		return EXIT_FAILURE;
+	while (gps_open("localhost", "2947", &gpsdata) != 0) {
+		fprintf(stderr, "cannot connect to gpsd, sleeping...\n");
+		sleep(1);
 	}
 
 	// start tm1640
