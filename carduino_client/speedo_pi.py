@@ -34,11 +34,10 @@ SHOW_CLOCK_DOT = ''
 
 def on_location(dt, speed, course, fix):
 	global SHOW_CLOCK_DOT
-	#print dt
 	now = parse_datetime(dt).astimezone(tzlocal)
 
 	if now.microsecond < 100000:
-		# whole second, toggle the dot and hide the display if there's no power
+		# whole second, toggle the dot
 		SHOW_CLOCK_DOT = '' if SHOW_CLOCK_DOT else '.'
 
 	if now.microsecond == 0 and now.second == 0:
@@ -68,11 +67,9 @@ def on_location(dt, speed, course, fix):
 
 		m = '%s      %03.0f %s' % (clock, speed, d)
 	else:
-		m = '%s           ' % (clock,)
-	
-	
-	#print "sending to screen..."
-	
+		# padding is automatically applied so don't do it again
+		m = clock
+
 	m += (16 - len(m)) * ' '
 	print m
 	display.write(m, invert_mode=INVERT_MODE_VERTICAL)
