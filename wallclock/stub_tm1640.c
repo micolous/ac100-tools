@@ -7,7 +7,7 @@
 
 tm1640_display* tm1640_init(int clock, int data) {
 	tm1640_display* out;
-	out = malloc(sizeof(out));
+	out = (tm1640_display*)malloc(sizeof(out));
 	memset((void*)out, 0, sizeof(out));
 	return out;
 }

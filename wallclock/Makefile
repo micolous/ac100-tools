@@ -1,7 +1,13 @@
+.PHONY: all clean
+
 all: wallclock wallclock-test
 
-wallclock: wallclock.c
-	gcc -o wallclock wallclock.c -lm -ltm1640 -std=c11
+wallclock: wallclock.cpp
+	c++ -o wallclock wallclock.cpp -ltm1640 `pkg-config --libs --cflags icu-uc icu-io`
 
-wallclock-test: stub_tm1640.c stub_tm1640.h wallclock.c
-	gcc -o wallclock-test stub_tm1640.c wallclock.c -lm -DSTUB_TM1640 -std=c11
+wallclock-test: stub_tm1640.c stub_tm1640.h wallclock.cpp
+	c++ -o wallclock-test stub_tm1640.c wallclock.cpp -DSTUB_TM1640 `pkg-config --libs --cflags icu-uc icu-io`
+
+clean:
+	rm -f wallclock wallclock-test
+

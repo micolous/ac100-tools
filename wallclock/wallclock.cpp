@@ -1,5 +1,5 @@
 /*
-wallclock/wallclock.c
+wallclock/wallclock.cpp
 Copyright 2013-2015 Michael Farrell <http://micolous.id.au/>
 
 This program is free software: you can redistribute it and/or modify
@@ -15,12 +15,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 */
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-#include <tgmath.h>
+
+#include <unicode/utypes.h>
+#include <unicode/calendar.h>
+#include <unicode/datefmt.h>
+#include <unicode/dtfmtsym.h>
+#include <unicode/locid.h>
+#include <unicode/smpdtfmt.h>
+#include <unicode/timezone.h>
+#include <unicode/unistr.h>
 
 #ifdef STUB_TM1640
 #include "stub_tm1640.h"
@@ -29,6 +35,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 static tm1640_display* display;
+static Calendar *calendar;
+static TimeZone *tzPacific;
+
+static SimpleDateFormat *df;
+
+void update_current_time() {
+	UnicodeString uPacific;
+	UErrorCode success = U_ZERO_ERROR;
+	UDate curDate = calendar->getNow();
+	
+	df->format(curDate, uPacific, success);
+	printf("Current Pacific: %s\n", uPacific.getTerminatedBuffer());
+}
 
 
 void loop() {
@@ -38,7 +57,7 @@ void loop() {
 }
 	
 int main(int argc, char** argv) {
-
+	UErrorCode success = U_ZERO_ERROR;
 
 	// start tm1640
 	display = tm1640_init(1, 0);
@@ -50,7 +69,21 @@ int main(int argc, char** argv) {
 	tm1640_displayOn(display, 7);
 	tm1640_displayClear(display);
 
+	// load tzdata
+	tzPacific = (TimeZone*)TimeZone::getGMT();
+	/*
+	printf("Of tzdata\n");
+	tzPacific = TimeZone::createTimeZone("America/Los_Angeles");
+	*/
+	printf("Of instance\n");
+	calendar = Calendar::createInstance(success);
+
+	//DateFormatSymbols* symbols = new DateFormatSymbols(Locale::getUS(), success);
+	printf("of simpledateformat\n");
+	df = new SimpleDateFormat(UnicodeString("HH:MMHHMMEEE "), success);
+	printf("of update_current_time\n");
+	update_current_time();
 	// run main loop
-	loop();
+	//loop();
 	return 0;
 }
