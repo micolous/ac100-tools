@@ -7,8 +7,8 @@
 
 tm1640_display* tm1640_init(int clock, int data) {
 	tm1640_display* out;
-	out = (tm1640_display*)malloc(sizeof(out));
-	memset((void*)out, 0, sizeof(out));
+	out = (tm1640_display*)malloc(sizeof(tm1640_display));
+	memset((void*)out, 0, sizeof(tm1640_display));
 	return out;
 }
 
@@ -18,7 +18,7 @@ void tm1640_destroy(tm1640_display* display) {
 
 void tm1640_displayClear(tm1640_display* display) {
 	printf("TM1640: Cleared\n");
-	memset((void*)display->displayBuffer, 0, sizeof(display->displayBuffer));
+	memset((void*)display->displayBuffer, 0, 33);
 }
 
 void tm1640_displayOff(tm1640_display* display) {

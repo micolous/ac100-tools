@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <unicode/smpdtfmt.h>
 #include <unicode/timezone.h>
 #include <unicode/unistr.h>
+#include <unicode/ustdio.h>
 
 #ifdef STUB_TM1640
 #include "stub_tm1640.h"
@@ -36,17 +37,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static tm1640_display* display;
 static Calendar *calendar;
-static TimeZone *tzPacific;
-
-static SimpleDateFormat *df;
+static const TimeZone *tzPacific;
+static SimpleDateFormat *dfPacific;
 
 void update_current_time() {
 	UnicodeString uPacific;
 	UErrorCode success = U_ZERO_ERROR;
 	UDate curDate = calendar->getNow();
 	
-	df->format(curDate, uPacific, success);
-	printf("Current Pacific: %s\n", uPacific.getTerminatedBuffer());
+	dfPacific->format(curDate, uPacific, success);
+	u_printf("Current Pacific: %S\n", uPacific.getTerminatedBuffer());
 }
 
 
@@ -70,18 +70,13 @@ int main(int argc, char** argv) {
 	tm1640_displayClear(display);
 
 	// load tzdata
-	tzPacific = (TimeZone*)TimeZone::getGMT();
-	/*
-	printf("Of tzdata\n");
 	tzPacific = TimeZone::createTimeZone("America/Los_Angeles");
-	*/
-	printf("Of instance\n");
+	
 	calendar = Calendar::createInstance(success);
 
 	//DateFormatSymbols* symbols = new DateFormatSymbols(Locale::getUS(), success);
-	printf("of simpledateformat\n");
-	df = new SimpleDateFormat(UnicodeString("HH:MMHHMMEEE "), success);
-	printf("of update_current_time\n");
+	dfPacific = new SimpleDateFormat(UnicodeString("HH.MMHHMMEEE "), success);
+	dfPacific->setTimeZone(*tzPacific);
 	update_current_time();
 	// run main loop
 	//loop();
