@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <unicode/utypes.h>
 #include <unicode/calendar.h>
@@ -37,22 +38,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static tm1640_display* display;
 static Calendar *calendar;
-static const TimeZone *tzPacific;
-static SimpleDateFormat *dfPacific;
+static const TimeZone *tzPacific, *tzZurich, *tzTokyo, *tzSydney;
+static SimpleDateFormat *dfPacific, *dfZurich, *dfTokyo, *dfSydney;
 
-void update_current_time() {
-	UnicodeString uPacific;
+void update_current_time(int mode) {
+	UnicodeString uPacific, uZurich, uTokyo, uSydney;
 	UErrorCode success = U_ZERO_ERROR;
 	UDate curDate = calendar->getNow();
-	
+	char buf[33];
+	int size = mode == 0 ? 5 : 4;
+
 	dfPacific->format(curDate, uPacific, success);
-	u_printf("Current Pacific: %S\n", uPacific.getTerminatedBuffer());
+	dfZurich->format(curDate, uZurich, success);
+	dfTokyo->format(curDate, uTokyo, success);
+	dfSydney->format(curDate, uSydney, success);
+
+	memset(buf, 0, sizeof(buf));
+	int offset = mode * size + (mode > 0 ? 1 : 0);
+	uPacific.extract(offset, size, buf);
+	uZurich.extract(offset, size, buf+size);
+	uTokyo.extract(offset, size, buf+(size*2));
+	uSydney.extract(offset, size, buf+(size*3));
+
+	//printf("screen = %s\n", buf);
+	tm1640_displayWrite(display, 0, buf, size*4, 0);
 }
 
 
 void loop() {
+	int mode = 0;
 	for (;;) {
-		
+		update_current_time(mode == 59 ? 2 : (mode % 2));
+		mode++;
+
+		if (mode > 59) {
+			mode = 0;
+		}
+
+		sleep(1);
 	}
 }
 	
@@ -71,14 +94,22 @@ int main(int argc, char** argv) {
 
 	// load tzdata
 	tzPacific = TimeZone::createTimeZone("America/Los_Angeles");
+	tzZurich = TimeZone::createTimeZone("Europe/Zurich");
+	tzTokyo = TimeZone::createTimeZone("Asia/Tokyo");
+	tzSydney = TimeZone::createTimeZone("Australia/Sydney");
 	
 	calendar = Calendar::createInstance(success);
 
-	//DateFormatSymbols* symbols = new DateFormatSymbols(Locale::getUS(), success);
 	dfPacific = new SimpleDateFormat(UnicodeString("HH.MMHHMMEEE "), success);
 	dfPacific->setTimeZone(*tzPacific);
-	update_current_time();
+	dfZurich = (SimpleDateFormat*)dfPacific->clone();
+	dfZurich->setTimeZone(*tzZurich);
+	dfTokyo = (SimpleDateFormat*)dfPacific->clone();
+	dfTokyo->setTimeZone(*tzTokyo);
+	dfSydney = (SimpleDateFormat*)dfPacific->clone();
+	dfSydney->setTimeZone(*tzSydney);
+
 	// run main loop
-	//loop();
+	loop();
 	return 0;
 }
