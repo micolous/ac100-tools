@@ -33,7 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef STUB_TM1640
 #include "stub_tm1640.h"
 #else
+extern "C" {
 #include <tm1640.h>
+}
 #endif
 
 static tm1640_display* display;
