@@ -39,21 +39,22 @@ extern "C" {
 #endif
 
 static tm1640_display* display;
-static Calendar *calendar;
 static const TimeZone *tzPacific, *tzZurich, *tzTokyo, *tzSydney;
 static SimpleDateFormat *dfPacific, *dfZurich, *dfTokyo, *dfSydney;
 
 void update_current_time(int mode) {
 	UnicodeString uPacific, uZurich, uTokyo, uSydney;
 	UErrorCode success = U_ZERO_ERROR;
-	UDate curDate = calendar->getNow();
+	Calendar *calendar = Calendar::createInstance(success);
+	UDate curDate = calendar->getNow();// * 1000;
+	printf("%f\n", curDate);
 	char buf[33];
 	int size = mode == 0 ? 5 : 4;
 
-	dfPacific->format(curDate, uPacific, success);
-	dfZurich->format(curDate, uZurich, success);
-	dfTokyo->format(curDate, uTokyo, success);
-	dfSydney->format(curDate, uSydney, success);
+	dfPacific->format(curDate, uPacific);
+	dfZurich->format(curDate, uZurich);
+	dfTokyo->format(curDate, uTokyo);
+	dfSydney->format(curDate, uSydney);
 
 	memset(buf, 0, sizeof(buf));
 	int offset = mode * size + (mode > 0 ? 1 : 0);
@@ -70,7 +71,7 @@ void update_current_time(int mode) {
 void loop() {
 	int mode = 0;
 	for (;;) {
-		update_current_time(mode == 59 ? 2 : (mode % 2));
+		update_current_time(mode >= 59 ? 2 : (mode % 2));
 		mode++;
 
 		if (mode > 59) {
@@ -99,10 +100,8 @@ int main(int argc, char** argv) {
 	tzZurich = TimeZone::createTimeZone("Europe/Zurich");
 	tzTokyo = TimeZone::createTimeZone("Asia/Tokyo");
 	tzSydney = TimeZone::createTimeZone("Australia/Sydney");
-	
-	calendar = Calendar::createInstance(success);
 
-	dfPacific = new SimpleDateFormat(UnicodeString("HH.MMHHMMEEE "), success);
+	dfPacific = new SimpleDateFormat(UnicodeString("HH.mmHHmmEEE "), success);
 	dfPacific->setTimeZone(*tzPacific);
 	dfZurich = (SimpleDateFormat*)dfPacific->clone();
 	dfZurich->setTimeZone(*tzZurich);
