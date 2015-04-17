@@ -47,7 +47,7 @@ void update_current_time(int mode) {
 	UErrorCode success = U_ZERO_ERROR;
 	Calendar *calendar = Calendar::createInstance(success);
 	UDate curDate = calendar->getNow();// * 1000;
-	printf("%f\n", curDate);
+	//printf("%f\n", curDate);
 	char buf[33];
 	int size = mode == 0 ? 5 : 4;
 
