@@ -1,3 +1,18 @@
+// Stubbed version of libtm1640-rpi for testing.
+// Copyright 2013 FuryFire
+// Copyright 2013, 2019 Michael Farrell <http://micolous.id.au/>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef STUB_TM1640
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +22,9 @@
 typedef struct {
 	char displayBuffer[33];
 } tm1640_display;
+
+#define DIN_PIN 2
+#define SCLK_PIN 1
 
 /**
  * Initialises the display.
